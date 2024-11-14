@@ -16,6 +16,7 @@ Config_prod.js
 *.pfx
 *.pdf
 02-Certificado
+firma_temp
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

@@ -55,8 +55,8 @@ async function firmaryEstamparDirectorio(directorioDestino, directorioProcesado,
                 const pdfDestino = generarDestino(directorioLote, file);
                 const numeroDePaginas = await obtenerNumeroDeHojasDelPDF(pdfOrigen);
 
-                const pdfFinal = await PDFDocument.create(); // Documento PDF final firmado               
-                
+                const pdfFinal = await PDFDocument.create(); // Documento PDF final firmado
+
                 for (let i = 1; i <= numeroDePaginas; i++) {
                     const pdfHojaTemporal = await extraerHojaPDF(pdfOrigen, i);
                     const pdfHojaFirmada = await firmarHojaTemporal(pdfHojaTemporal, enPruebas);
@@ -69,8 +69,8 @@ async function firmaryEstamparDirectorio(directorioDestino, directorioProcesado,
                     // Generar un nombre único para cada PDF firmado en firma_temp
                     /*const pdfFirmadoTempPath = path.join(directorioTemporalFirmas, `pagina_${i}_firmada.pdf`);
                     fs.writeFileSync(pdfFirmadoTempPath, fs.readFileSync(pdfHojaFirmada));
-                    console.log(`Página ${i} firmada y guardada como PDF independiente en: ${pdfFirmadoTempPath}`);*/
-                    
+                    console.log(`Página ${i} firmada y guardada como PDF independiente en: ${pdfFirmadoTempPath}`);
+                    */
                   
                 }
                 logEntrada(archivoLog, "Firmado y Estampado", pdfOrigen);
@@ -104,19 +104,19 @@ async function firmaryEstamparDirectorio(directorioDestino, directorioProcesado,
 // Función para firmar una hoja temporal (simulando el firmado usando Java)
 async function firmarHojaTemporal(pdfHojaTemporal, enPruebas) {
     const pdfTemporalPath = path.join(__dirname, 'pdf_hoja_temporal.pdf'); // Ruta donde se guardará el PDF temporal
-    const pdfDestinoTemporal = path.join(__dirname, 'pdf_hoja_firmada_temporal.pdf'); // Ruta del PDF firmado  
+    const pdfDestinoTemporal = path.join(__dirname, 'pdf_hoja_firmada_temporal.pdf'); // Ruta del PDF firmado
      // Ruta del archivo jar
      let componentejar ='./01-ComponenteJar/AndesSCDFirmador.jar';
      let certificadoRuta_1= './02-Certificado/Certificado.pfx';
     // 1. Guardar el PDF temporal en un archivo antes de firmarlo
-    //const pdfBytes = await pdfHojaTemporal.save();
-    //fs.writeFileSync(pdfTemporalPath, pdfBytes);  // Guarda el archivo temporal en la ruta especificada
+    const pdfBytes = await pdfHojaTemporal.save();
+    fs.writeFileSync(pdfTemporalPath, pdfBytes);  // Guarda el archivo temporal en la ruta especificada
 
-    return new Promise((resolve, reject) => { 
+    return new Promise((resolve, reject) => {
         // 2. Crear el comando con la ruta del PDF temporal
         const argumentos = [
             '-jar', `${componentejar}`,
-            '--metodofirma P12',
+            '--metodofirma estampa',
             '--formatofirma pdf',
             `--p12 ${certificadoRuta_1}`,
             `--passp12 ${config.certificadoContrasena}`,
@@ -124,12 +124,13 @@ async function firmarHojaTemporal(pdfHojaTemporal, enPruebas) {
             `--salida "${pdfDestinoTemporal}"`,
             '--formatoentrada archivo',
             '--formatosalida archivo',
+            `--visible true`,
+            //`--ubicación 0,0,0,0`,
             '--aplicatsa true',
             `--tsausuario ${config.tsaUsuario}`,
             `--tsapass ${config.tsaContrasena}`,
             '--tsaurl https://tsa.andesscd.com.co/',
             `--test ${enPruebas}`,
-            `--visible true`
         ].join(' ');
 
         // Ejecutar el firmador de Java

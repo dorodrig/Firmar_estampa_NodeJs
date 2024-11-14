@@ -28,7 +28,9 @@
     }
 
     // Ejemplo de uso
-    const directorioTemporalFirmas = path.join(__dirname, 'firma_temp'); // Directorio donde están los PDFs firmados
+    let ruta = 'C:/Users/DavidOrlandoRodrigue/Desktop/pdf_firmar/firmado/Carpeta 01';
+    const directorioTemporalFirmas = path.join(ruta); // Directorio donde están los PDFs firmados
+    //const directorioTemporalFirmas = path.join(__dirname, 'firma_temp'); // Directorio donde están los PDFs firmados
     const archivoSalida = path.join(__dirname, 'pdf_combinado_final.pdf'); // Ruta del archivo final combinado
 
     combinarPDFs(directorioTemporalFirmas, archivoSalida)
